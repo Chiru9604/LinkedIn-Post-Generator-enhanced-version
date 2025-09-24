@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedIn Post Generator - AI Powered Content Creation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.3rem;
+            font-weight: 400;
+        }
+
+        /* Stats Cards */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-top: 4px solid #667eea;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        /* Form Section */
+        .form-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .form-section h2 {
+            color: #333;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Preview Section */
+        .preview-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .preview-section h2 {
+            color: #333;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .post-preview {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 5px solid #667eea;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .post-content {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            line-height: 1.6;
+            font-size: 1rem;
+            color: #2c3e50;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+            white-space: pre-wrap;
+            min-height: 150px;
+        }
+
+        .placeholder-text {
+            color: #6c757d;
+            font-style: italic;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .copy-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .copy-btn:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* Tips Section */
+        .tips-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .tips-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tips-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tips-list li {
+            padding: 8px 0;
+            color: #555;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .tips-list li::before {
+            content: "✨";
+            flex-shrink: 0;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: rgba(255, 255, 255, 0.8);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 40px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .header p {
+                font-size: 1.1rem;
+            }
+
+            .form-section, .preview-section {
+                padding: 25px;
+            }
+        }
+
+        /* Success Animation */
+        .success-animation {
+            animation: successPulse 0.6s ease-in-out;
+        }
+
+        @keyframes successPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📝 LinkedIn Post Generator</h1>
+            <p>LinkedIn Post Generator Powered by LLMs</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-number">50+</div>
+                <div class="stat-label">Topics Available</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Post Lengths</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">2</div>
+                <div class="stat-label">Languages</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Form Section -->
+            <div class="form-section">
+                <h2><i class="fas fa-cog"></i> Customize Your Post</h2>
+                <form id="postForm">
+                    <div class="form-group">
+                        <label for="topic">📌 Select Topic:</label>
+                        <select id="topic" class="form-control" required>
+                            <option value="">Choose a topic...</option>
+                            <option value="Career Growth">Career Growth</option>
+                            <option value="Leadership">Leadership</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Entrepreneurship">Entrepreneurship</option>
+                            <option value="Personal Development">Personal Development</option>
+                            <option value="Mental Health">Mental Health</option>
+                            <option value="Work-Life Balance">Work-Life Balance</option>
+                            <option value="Innovation">Innovation</option>
+                            <option value="Networking">Networking</option>
+                            <option value="Job Search">Job Search</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="length">📏 Post Length:</label>
+                        <select id="length" class="form-control" required>
+                            <option value="">Choose length...</option>
+                            <option value="Short">Short (1-5 lines)</option>
+                            <option value="Medium">Medium (6-10 lines)</option>
+                            <option value="Long">Long (11-15 lines)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="language">🌐 Language:</label>
+                        <select id="language" class="form-control" required>
+                            <option value="">Choose language...</option>
+                            <option value="English">English</option>
+                            <option value="Hinglish">Hinglish (Hindi + English)</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="generate-btn" id="generateBtn">
+                        <i class="fas fa-magic"></i>
+                        Generate LinkedIn Post
+                    </button>
+                </form>
+            </div>
+
+            <!-- Preview Section -->
+            <div class="preview-section">
+                <h2><i class="fas fa-eye"></i> Post Preview</h2>
+                <div class="post-preview">
+                    <div class="loading" id="loading">
+                        <div class="loading-spinner"></div>
+                        <div class="loading-text">🤖 AI is crafting your perfect LinkedIn post...</div>
+                    </div>
+                    <div class="post-content" id="postContent">
+                        <div class="placeholder-text">
+                            Your generated LinkedIn post will appear here. Fill out the form and click "Generate LinkedIn Post" to get started!
+                        </div>
+                    </div>
+                    <button class="copy-btn" id="copyBtn" style="display: none;">
+                        <i class="fas fa-copy"></i>
+                        Copy to Clipboard
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tips Section -->
+        <div class="tips-section">
+            <h3><i class="fas fa-lightbulb"></i> Tips for Better Engagement</h3>
+            <ul class="tips-list">
+                <li><strong>Add relevant hashtags</strong> to increase visibility</li>
+                <li><strong>Tag relevant people</strong> in your network</li>
+                <li><strong>Post during peak hours</strong> (8-10 AM or 12-2 PM)</li>
+                <li><strong>Engage with comments</strong> to boost algorithm reach</li>
+                <li><strong>Use emojis sparingly</strong> but effectively</li>
+                <li><strong>Ask questions</strong> to encourage interaction</li>
+            </ul>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>LinkedIn Post Generator Powered by LLMs</p>
+        </div>
+    </div>
+
+    <script>
+        // Form handling
+        const form = document.getElementById('postForm');
+        const generateBtn = document.getElementById('generateBtn');
+        const loading = document.getElementById('loading');
+        const postContent = document.getElementById('postContent');
+        const copyBtn = document.getElementById('copyBtn');
+
+        // Load available topics from backend
+        async function loadTopics() {
+            try {
+                const response = await fetch('/api/topics');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const topicSelect = document.getElementById('topic');
+                    // Clear existing options except the first one
+                    topicSelect.innerHTML = '<option value="">Choose a topic...</option>';
+                    
+                    // Add topics from backend
+                    data.topics.forEach(topic => {
+                        const option = document.createElement('option');
+                        option.value = topic;
+                        option.textContent = topic;
+                        topicSelect.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to load topics:', error);
+                // Keep the default topics if API fails
+            }
+        }
+
+        // Load topics when page loads
+        document.addEventListener('DOMContentLoaded', loadTopics);
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const topic = document.getElementById('topic').value;
+            const length = document.getElementById('length').value;
+            const language = document.getElementById('language').value;
+
+            if (!topic || !length || !language) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // Show loading
+            loading.style.display = 'block';
+            postContent.innerHTML = '';
+            copyBtn.style.display = 'none';
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+
+            try {
+                // Call the backend API
+                const response = await fetch('/api/generate-post', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        topic: topic,
+                        length: length,
+                        language: language
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Hide loading and show result
+                    loading.style.display = 'none';
+                    postContent.innerHTML = data.post;
+                    copyBtn.style.display = 'flex';
+                    
+                    // Add success animation
+                    document.querySelector('.post-preview').classList.add('success-animation');
+                    setTimeout(() => {
+                        document.querySelector('.post-preview').classList.remove('success-animation');
+                    }, 600);
+                } else {
+                    throw new Error(data.error || 'Failed to generate post');
+                }
+            } catch (error) {
+                console.error('Error generating post:', error);
+                
+                // Hide loading and show error
+                loading.style.display = 'none';
+                postContent.innerHTML = `<div style="color: #dc3545; text-align: center; padding: 20px;">
+                    <i class="fas fa-exclamation-triangle"></i><br>
+                    Failed to generate post. Please try again.<br>
+                    <small>Error: ${error.message}</small>
+                </div>`;
+                
+                // Fallback to sample post
+                const fallbackPost = generateGenericPost(topic, length, language);
+                setTimeout(() => {
+                    postContent.innerHTML = fallbackPost;
+                    copyBtn.style.display = 'flex';
+                }, 3000);
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = '<i class="fas fa-magic"></i> Generate LinkedIn Post';
+            }
+        });
+
+        // Copy to clipboard functionality
+        copyBtn.addEventListener('click', async () => {
+            const text = postContent.textContent;
+            
+            try {
+                await navigator.clipboard.writeText(text);
+                
+                // Show success feedback
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                copyBtn.style.background = '#28a745';
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.style.background = '#28a745';
+                }, 2000);
+                
+            } catch (err) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => {
+                    copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy to Clipboard';
+                }, 2000);
+            }
+        });
+
+        // Generate a generic post when no sample is available
+        function generateGenericPost(topic, length, language) {
+            const emojis = ['🚀', '💡', '🎯', '✨', '🔥', '💪', '🌟', '📈'];
+            const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+            
+            let post = `${randomEmoji} Excited to share some thoughts on ${topic}!\n\n`;
+            
+            if (length === 'Short') {
+                post += `Key insights:\n✅ Stay curious\n✅ Keep learning\n✅ Share knowledge\n\nWhat's your take on ${topic}?\n\n#${topic.replace(' ', '')} #Learning`;
+            } else if (length === 'Medium') {
+                post += `Here's what I've learned about ${topic}:\n\n→ It's all about continuous improvement\n→ Small steps lead to big changes\n→ Community and networking matter\n→ Don't be afraid to fail and learn\n\nThe journey is just as important as the destination.\n\nWhat's been your biggest learning in ${topic}?\n\n#${topic.replace(' ', '')} #Growth #Learning`;
+            } else {
+                post += `Deep dive into ${topic} - here are my thoughts:\n\nAfter years of experience, I've realized that success in ${topic} comes down to a few key principles:\n\n1️⃣ Consistency beats perfection\n2️⃣ Learning never stops\n3️⃣ Relationships are everything\n4️⃣ Authenticity wins\n5️⃣ Value creation is key\n\nBut here's the thing most people miss:\n\nIt's not about having all the answers. It's about asking the right questions and being willing to adapt.\n\nI've seen too many talented people plateau because they stopped being curious.\n\nDon't let that be you.\n\nStay hungry. Stay humble. Keep growing.\n\nWhat's one lesson about ${topic} that changed your perspective?\n\n#${topic.replace(' ', '')} #Growth #Success #Learning`;
+            }
+            
+            if (language === 'Hinglish') {
+                post = post.replace('Excited to share', 'Bahut excited hun to share');
+                post = post.replace('What\'s your take', 'Aapka kya take hai');
+                post = post.replace('Here\'s what I\'ve learned', 'Yahan hai jo maine sikha hai');
+            }
+            
+            return post;
+        }
+
+        // Add some interactive effects
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-5px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
